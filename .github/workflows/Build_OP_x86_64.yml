@@ -12,6 +12,11 @@ on:
   repository_dispatch:
   workflow_dispatch:
 
+
+  FEEDS_CONF: feeds.conf.default
+  DIY_P1_SH: openwrt-Project2.sh
+  DIY_P2_SH: openwrt-Project3.sh
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,31 +55,29 @@ jobs:
         sudo -E apt-get clean
 
     - name: Clone source code
-      env: 
+      env :
         REPO_URL: https://github.com/coolsnowwolf/lede
         REPO_BRANCH: master
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-        cd openwrt
-        echo "src-git ssrp https://github.com/fw876/helloworld.git" >> ./feeds.conf.default
         
-    - name: Update & Install feeds
-      working-directory: ./openwrt
+    - name: 加载自定义设置
+      env:
+        FEEDS_CONF: 'feeds.conf.default'
       run: |
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-        ./scripts/feeds install -a
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        chmod +x ./customize2.sh && ./customize2.sh
 
-    #- name: Import external feeds - passwall
-    #  working-directory: ./openwrt
-    #  run: |
-    #    git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
-    #    git clone "your_github_link" package/"your_folder_name"      
+    - name: 下载插件
+      run: cd openwrt && ./scripts/feeds update -a
 
-    #- name: Import external feeds - JerryKuKu Argon
-    #  working-directory: ./openwrt
-    #  run: |
-    #    git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon-jerrykuku
+    - name: 更改设置
+      env:
+        CONFIG_FILE: 'x86_64.config'
+      run: |
+        [ -e files ] && mv files openwrt/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        chmod +x ./customize3.sh && ./customize3.sh
 
     - name: Configuration Customization - Build_x86_64
       env:
