@@ -12,11 +12,6 @@ on:
   repository_dispatch:
   workflow_dispatch:
 
-
-  FEEDS_CONF: feeds.conf.default
-  DIY_P1_SH: openwrt-Project2.sh
-  DIY_P2_SH: openwrt-Project3.sh
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,7 +50,7 @@ jobs:
         sudo -E apt-get clean
 
     - name: Clone source code
-      env :
+      env:
         REPO_URL: https://github.com/coolsnowwolf/lede
         REPO_BRANCH: master
       run: |
