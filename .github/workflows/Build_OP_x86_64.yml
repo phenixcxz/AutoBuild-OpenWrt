@@ -61,7 +61,9 @@ jobs:
         FEEDS_CONF: 'feeds.conf.default'
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x ./customize2.sh && ./customize2.sh
+        chmod +x ./customize2.sh 
+        cd openwrt
+        $GITHUB_WORKSPACE/customize2.sh
 
     - name: 下载插件
       run: cd openwrt && ./scripts/feeds update -a
@@ -72,7 +74,9 @@ jobs:
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x ./customize3.sh && ./customize3.sh
+        chmod +x ./customize3.sh 
+        cd openwrt
+        $GITHUB_WORKSPACE/customize3.sh
 
     - name: Configuration Customization - Build_x86_64
       env:
