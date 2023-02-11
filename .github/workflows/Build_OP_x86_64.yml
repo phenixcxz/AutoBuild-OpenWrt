@@ -72,6 +72,7 @@ jobs:
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        cd openwrt
         chmod +x ./customize3.sh && ./customize3.sh
 
     - name: Configuration Customization - Build_x86_64
